@@ -87,6 +87,10 @@ class TimePicker extends Component {
      */
     textFieldStyle: PropTypes.object,
     /**
+     * Set the timezone of the Time Picker.
+     */
+    timeZone: PropTypes.string,
+    /**
      * Sets the time for the Time Picker programmatically.
      */
     value: PropTypes.object,
@@ -101,6 +105,7 @@ class TimePicker extends Component {
     okLabel: 'OK',
     pedantic: false,
     style: {},
+    timezone: 'UTC',
     value: null,
     minutesStep: 1,
   };
@@ -196,6 +201,7 @@ class TimePicker extends Component {
       pedantic,
       style,
       textFieldStyle,
+      timeZone,
       minutesStep,
       ...other
     } = this.props;
@@ -209,7 +215,7 @@ class TimePicker extends Component {
           {...other}
           style={textFieldStyle}
           ref="input"
-          value={time === emptyTime ? null : formatTime(time, format, pedantic)}
+          value={time === emptyTime ? null : formatTime(time, timeZone, format, pedantic)}
           onFocus={this.handleFocusInput}
           onClick={this.handleClickInput}
         />
@@ -226,6 +232,7 @@ class TimePicker extends Component {
           autoOk={autoOk}
           style={dialogStyle}
           minutesStep={minutesStep}
+          timeZone={timeZone}
         />
       </div>
     );

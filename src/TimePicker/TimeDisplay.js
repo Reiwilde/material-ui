@@ -10,6 +10,7 @@ class TimeDisplay extends Component {
     onSelectHour: PropTypes.func,
     onSelectMin: PropTypes.func,
     selectedTime: PropTypes.object.isRequired,
+    timeZone: PropTypes.string,
   };
 
   static defaultProps = {
@@ -36,8 +37,15 @@ class TimeDisplay extends Component {
   }
 
   sanitizeTime() {
-    let hour = this.props.selectedTime.getHours();
-    let min = this.props.selectedTime.getMinutes().toString();
+    const dateParts = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      hour12: false,
+      minute: 'numeric',
+      timeZone: this.props.timeZone,
+    }).formatToParts(this.props.selectedTime);
+
+    let hour = Number.parseInt(dateParts[0].value, 10);
+    let min = dateParts[2].value;
 
     if (this.props.format === 'ampm') {
       hour %= 12;

@@ -22,15 +22,23 @@ function clone(d) {
 
 /**
  * @param date [Date] A Date object.
+ * @param timezone [String] A Canonical timezone.
  * @param format [String] One of 'ampm', '24hr', defaults to 'ampm'.
  * @param pedantic [Boolean] Check time-picker/time-picker.jsx file.
  *
  * @return String A string representing the formatted time.
  */
-export function formatTime(date, format = 'ampm', pedantic = false) {
+export function formatTime(date, timeZone, format = 'ampm', pedantic = false) {
   if (!date) return '';
-  let hours = date.getHours();
-  let mins = date.getMinutes().toString();
+  const dateParts = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    hour12: false,
+    minute: 'numeric',
+    timeZone,
+  }).formatToParts(date);
+
+  let hours = Number.parseInt(dateParts[0].value, 10);
+  let mins = dateParts[2].value;
 
   if (format === 'ampm') {
     const isAM = hours < 12;

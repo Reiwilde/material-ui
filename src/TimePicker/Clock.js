@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 import TimeDisplay from './TimeDisplay';
 import ClockHours from './ClockHours';
 import ClockMinutes from './ClockMinutes';
@@ -11,6 +12,7 @@ class Clock extends Component {
     minutesStep: PropTypes.number,
     onChangeHours: PropTypes.func,
     onChangeMinutes: PropTypes.func,
+    timeZone: PropTypes.string,
   };
 
   static defaultProps = {
@@ -70,6 +72,8 @@ class Clock extends Component {
 
   handleChangeHours = (hours, finished) => {
     const time = new Date(this.state.selectedTime);
+    const tzOffset = moment.tz(time, this.props.timeZone).utcOffset() / 60 * -1;
+
     let affix;
 
     if ( typeof finished === 'string' ) {
@@ -83,7 +87,7 @@ class Clock extends Component {
       hours += 12;
     }
 
-    time.setHours(hours);
+    time.setUTCHours(hours + tzOffset);
     this.setState({
       selectedTime: time,
     });
@@ -104,7 +108,7 @@ class Clock extends Component {
 
   handleChangeMinutes = (minutes, finished) => {
     const time = new Date(this.state.selectedTime);
-    time.setMinutes(minutes);
+    time.setUTCMinutes(minutes);
     this.setState({
       selectedTime: time,
     });
@@ -149,13 +153,20 @@ class Clock extends Component {
       },
     };
 
+    const dateParts = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      hour12: false,
+      minute: 'numeric',
+      timeZone: this.props.timeZone,
+    }).formatToParts(this.state.selectedTime);
+
     if (this.state.mode === 'hour') {
       clock = (
         <ClockHours
           key="hours"
           format={this.props.format}
           onChange={this.handleChangeHours}
-          initialHours={this.state.selectedTime.getHours()}
+          initialHours={Number.parseInt(dateParts[0].value, 10)}
         />
       );
     } else {
@@ -163,7 +174,7 @@ class Clock extends Component {
         <ClockMinutes
           key="minutes"
           onChange={this.handleChangeMinutes}
-          initialMinutes={this.state.selectedTime.getMinutes()}
+          initialMinutes={Number.parseInt(dateParts[2].value, 10)}
           step={this.props.minutesStep}
         />
       );
@@ -179,6 +190,7 @@ class Clock extends Component {
           onSelectAffix={this.handleSelectAffix}
           onSelectHour={this.setMode.bind(this, 'hour')}
           onSelectMin={this.setMode.bind(this, 'minute')}
+          timeZone={this.props.timeZone}
         />
         <div style={prepareStyles(styles.container)} >
           <div style={prepareStyles(styles.circle)} />

@@ -19,6 +19,7 @@ class TimePickerDialog extends Component {
     onDismiss: PropTypes.func,
     onShow: PropTypes.func,
     style: PropTypes.object,
+    timeZone: PropTypes.string,
   };
 
   static defaultProps = {
@@ -84,6 +85,7 @@ class TimePickerDialog extends Component {
       cancelLabel,
       style,
       minutesStep,
+      timeZone,
       ...other
     } = this.props;
 
@@ -139,6 +141,7 @@ class TimePickerDialog extends Component {
             initialTime={initialTime}
             onChangeMinutes={onClockChangeMinutes}
             minutesStep={minutesStep}
+            timeZone={timeZone}
           />
         }
       </Dialog>

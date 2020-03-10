@@ -44,6 +44,8 @@
     "postpublish": "npm run build && cd build && npm publish"
   },
   "peerDependencies": {
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.9",
     "react": "^15.4.0 || ^16.0.0",
     "react-dom": "^15.4.0 || ^16.0.0"
   },
